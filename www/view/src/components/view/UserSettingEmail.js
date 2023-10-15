@@ -105,8 +105,8 @@ class UserSettingEmail extends React.Component {
       error: {},
       validationEmail: null,
       code: '',
-      codeDisabled: false,
-      count: 61
+      codeDisabled: [],
+      count: {}
     }
 
     const { intl } = props
@@ -121,7 +121,7 @@ class UserSettingEmail extends React.Component {
       },
       {
         name: 'email',
-        passPattern: /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/,
+        passPattern: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
         errorMessage: intl.formatMessage(
           { id: 'message.error._S_invalid' },
           { s: intl.formatMessage({ id: 'label.email' }) }
@@ -220,7 +220,12 @@ class UserSettingEmail extends React.Component {
   resentCommitEmailCode (email) {
     const { intl } = this.props
     const { codeDisabled } = this.state
-    if (codeDisabled) {
+
+    if (typeof codeDisabled[email] === 'undefined') {
+      codeDisabled[email] = false
+    }
+
+    if (codeDisabled[email]) {
       return false
     }
 
@@ -231,20 +236,31 @@ class UserSettingEmail extends React.Component {
       .then((data) => {
         if (!data.code) {
           this.props.dispatchEvent(EventGenerator.NewNotification(intl.formatMessage({ id: 'message.emailCodeHasSendNewEmail' }), 0))
-          this.countDown()
+          this.countDown(email)
         } else {
           this.props.dispatchEvent(EventGenerator.NewNotification(intl.formatMessage({ id: 'message.error.getEmailCodeFail' }), 2))
         }
       })
   }
 
-  countDown () {
-    let { count } = this.state
-    if (count) {
-      this.setState({ codeDisabled: true, count: --count })
-      window.setTimeout(() => this.countDown(), 1000)
+  countDown (email) {
+    const { count, codeDisabled } = this.state
+
+    if (typeof count[email] === 'undefined') {
+      count[email] = 120
+    }
+
+    if (count[email]) {
+      this.setState({
+        codeDisabled: { ...codeDisabled, [email]: true },
+        count: { ...count, [email]: --count[email] }
+      })
+      window.setTimeout(() => this.countDown(email), 1000)
     } else {
-      this.setState({ codeDisabled: false, count: 61 })
+      this.setState({
+        codeDisabled: { ...codeDisabled, [email]: false },
+        count: { ...count, [email]: 120 }
+      })
     }
   }
 
@@ -331,12 +347,12 @@ class UserSettingEmail extends React.Component {
               ? <Typography variant='body2' component='div'>{intl.formatMessage({ id: 'message.contactedEmail' })}</Typography>
               : <Typography variant='body2' component='div'>
                 {intl.formatMessage({ id: 'message.shouldValidation' })}
-                <a href='#' disabled={codeDisabled}
-                  className={[classes.btn, codeDisabled ? classes.disabled : ''].join(' ')}
+                <a href='#' disabled={codeDisabled[item.email]}
+                  className={[classes.btn, codeDisabled[item.email] ? classes.disabled : ''].join(' ')}
                   onClick={e => this.resentCommitEmailCode(item.email)}
                 >
                   {intl.formatMessage({ id: 'message.resendEmail' })}?
-                  {codeDisabled && '(' + count + ')'}
+                  {codeDisabled[item.email] && '(' + count[item.email] + ')'}
                 </a>
               </Typography>,
           item.email !== primaryEmail && <React.Fragment>

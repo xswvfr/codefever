@@ -18,7 +18,7 @@ echo 'ssh for user git set!'
 
 cp nginx.conf-template /usr/local/nginx/conf/nginx.conf
 
-echo 'nginx configuration file cpoied!'
+echo 'nginx configuration file copied!'
 
 cp php.ini-template /usr/local/php/etc/php.ini
 cp php-fpm.conf-template /usr/local/php/etc/php-fpm.conf
@@ -40,7 +40,7 @@ chmod 0777 ../config.yaml ../env.yaml
 echo 'env files generated!'
 
 mkdir ../application/logs
-chmod -R git:git ../application/logs
+chown -R git:git ../application/logs
 
 chmod -R 0777 ../git-storage
 
@@ -61,8 +61,20 @@ echo 'Composer libraries loaded!'
 service codefever start
 service php-fpm start
 service nginx start
+service crond start
+service sendmail start
 
-echo 'services started!'
+echo 'Services Started!'
+
+TARGET_CRONJOB=`crontab -u git -l 2>/dev/null | grep 'codefever_schedule.sh' | wc -l`
+if [ $TARGET_CRONJOB -eq 0 ]; then
+    crontab -u git -l 2>/dev/null >  /tmp/cronjob.temp
+    echo "* * * * * sh /data/www/codefever-community/application/backend/codefever_schedule.sh" >> /tmp/cronjob.temp
+    crontab -u git /tmp/cronjob.temp
+    rm -f /tmp/cronjob.temp
+fi
+
+echo 'Cronjob Registerd!'
 
 echo 'Done!'
 
@@ -72,4 +84,6 @@ echo '=== IMPORTANT NOTICE ==='
 echo '1. You shuold edit file </data/www/codefever-community/env.yaml: mysql/*> to finish mysql settings.'
 echo '2. You shuold edit file </data/www/codefever-community/env.yaml: session/*> to finish cookie settings.'
 echo '3. You shuold edit file </data/www/codefever-community/env.yaml: gateway/token> to finish git gateway security settings.'
-echo '4. Run sh ./create_db.sh after change env.yaml.'
+echo '4. You shuold edit file </data/www/codefever-community/env.yaml: totp/salt> to finish verification code security settings.'
+echo '5. Run sh ./create_db.sh after change env.yaml.'
+echo '6. Run sh ./remove_test_data.sh if you DO NOT need to run unit test.'

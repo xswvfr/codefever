@@ -20,6 +20,7 @@ import NewRepository from 'APPSRC/components/view/NewRepository'
 import NewRepositoryFork from 'APPSRC/components/view/NewRepositoryFork'
 import RepositorySettingGeneral from 'APPSRC/components/view/RepositorySettingGeneral'
 import RepositorySettingBranch from 'APPSRC/components/view/RepositorySettingBranch'
+import RepositorySettingWebhook from 'APPSRC/components/view/RepositorySettingWebhook'
 import RepositorySettingMembers from 'APPSRC/components/view/RepositorySettingMembers'
 import RepositorySettingAdvanced from 'APPSRC/components/view/RepositorySettingAdvanced'
 
@@ -101,17 +102,17 @@ class MainRoutes extends React.Component {
       <Route path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)'>
         <Switch>
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/files' component={FileTree} />
-          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/files/:rev([\w\-\.%]+)' component={FileTree} />
-          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/:type(files|blame)/:rev([\w\-\.%]+):path(/.*)' component={FileTree} />
+          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/files/:rev([\w\-\.%|]+)' component={FileTree} />
+          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/:type(files|blame)/:rev([\w\-\.%|]+):path(/.*)' component={FileTree} />
 
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/commit/:hash([0-9a-f]{8})' component={CommitDetail} />
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/commits' component={CommitList} />
-          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/commits/:rev([\w\-\.%]+)' component={CommitList} />
-          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/commits/:rev([\w\-\.%]+):path(/.*)' component={CommitList} />
+          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/commits/:rev([\w\-\.%|]+)' component={CommitList} />
+          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/commits/:rev([\w\-\.%|]+):path(/.*)' component={CommitList} />
 
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/mergerequests' component={MergeRequest} />
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/mergerequests/new' component={CreateMergeRequest} />
-          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/mergerequests/detail/:sourceRepository([0-9a-f]{32})/:sourceBranch([\w\-\.%]+)/:targetRepository([0-9a-f]{32})/:targetBranch([\w\-\.%]+)' component={MergeRequestDetail} />
+          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/mergerequests/detail/:sourceRepository([0-9a-f]{32})/:sourceBranch([\w\-\.%|]+)/:targetRepository([0-9a-f]{32})/:targetBranch([\w\-\.%|]+)' component={MergeRequestDetail} />
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/mergerequests/:mid(\d+)' component={MergeRequestDetail} />
 
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/branches' component={BranchList} />
@@ -127,6 +128,7 @@ class MainRoutes extends React.Component {
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/settings' component={RepositorySettingGeneral} />
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/settings/general' component={RepositorySettingGeneral} />
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/settings/branch' component={RepositorySettingBranch} />
+          <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/settings/webhook' component={RepositorySettingWebhook} />
           <Route exact path='/:groupName([A-Za-z0-9_]{5,})/:repositoryName([A-Za-z0-9_]+)/settings/advanced' component={RepositorySettingAdvanced} />
 
           <Route component={FileTree} />
